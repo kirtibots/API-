@@ -3,3 +3,6 @@ uvicorn==0.28.0
 requests==2.31.0
 pydantic==2.6.4
 pyTelegramBotAPI==4.16.1
+pymongo
+dnspython
+
