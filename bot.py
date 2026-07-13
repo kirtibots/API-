@@ -138,11 +138,11 @@ def send_start_welcome(message):
     
     welcome_text = (
         f"👋 *Hello {user_name}*,\n\n"
-        f"Welcome to *MARCO_BOTS API System*! 🚀\n\n"
+        f"Welcome to *krishna_BOTS API System*! 🚀\n\n"
         f"Main aapko high-speed aur personal API Keys provide karunga jisse aap apne Music bots me bina kisi dikkat ke high-quality gaane aur videos play kar payenge.\n\n"
         f"📌 *Apni API Key nikalne ke liye niche diye gaye command ka use kare:*\n"
         f"👉 `/keygen` - Generate or View your 28-Days API Key\n\n"
-        f"Kisi bhi help ke liye aap niche diye gaye Support or Owner buttons ka use kar sakte hain!"
+        f"any help to  Support group join!"
     )
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
 
@@ -178,11 +178,10 @@ def handle_key_generation(message):
 
     keygen_text = (
         f"🔑 *MARCO_BOTS API KEY MANAGER* 🔑\n\n"
-        f"👤 *User Name:* {user_name}\n"
-        f"📢 *Key Status:* {status_text}\n\n"
+        f"👤 *User Name:* {first_name}\n"
+        f"📢 *Key Status:* {status_text}\n"
         f"🤖 *System Status:* `{api_status}`\n"
-        f"🔑 *Your API Key:* `{api_key}`\n"
-        f"🌐 *API URL:* `https://api-dl.cgm.rs/api/json`\n\n"
+        f"🌐 *API URL:* `https://marco-yt-api-production.up.railway.app/api/json`\n\n"
         f"💬 *Note:* Is key ko copy kare aur apne Music Bot ke Environment Variables / Config Headers me `X-API-Key` ke roop me paste kar dein. Enjoy seamless downloading! 🚀"
     )
     bot.send_message(message.chat.id, keygen_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
