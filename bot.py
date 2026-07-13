@@ -101,9 +101,9 @@ def get_main_keyboard():
     ch_name = UPDATE_CHANNEL.replace("@", "").strip()
     sp_name = SUPPORT_GROUP.replace("@", "").strip()
     
-    btn_owner = InlineKeyboardButton("👑 Owner / Developer", url=f"https://t.me/{ch_name}")
-    btn_update = InlineKeyboardButton("📢 Update Channel", url=f"https://t.me/{ch_name}")
-    btn_support = InlineKeyboardButton("💬 Support Group", url=f"https://t.me/{sp_name}")
+    btn_owner = InlineKeyboardButton("⛥ 𝗞ʀ𝛊֟፝͝ꜱʜnᴀ ⛥", url=f"https://t.me/{ch_name}")
+    btn_update = InlineKeyboardButton("📢 Update", url=f"https://t.me/{ch_name}")
+    btn_support = InlineKeyboardButton("💬 Support", url=f"https://t.me/{sp_name}")
     
     markup.row(btn_owner)
     markup.row(btn_update, btn_support)
