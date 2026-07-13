@@ -18,4 +18,3 @@ SUPPORT_GROUP = "@YourSupportGroup"    # उदा: @marco_support
 # कोर डाउनलोडर API और डेटाबेस फाइल का नाम
 COBALT_API_URL = "https://api-dl.cgm.rs/api/json"
 MONGO_URL = "mongodb+srv://pusers:nycreation@nycreation.pd4klp1.mongodb.net/?retryWrites=true&w=majority&appName=NYCREATION"
-DB_FILE = "database.json"
