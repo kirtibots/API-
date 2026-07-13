@@ -16,5 +16,5 @@ UPDATE_CHANNEL = "@YourUpdateChannel"   # उदा: @marco_updates
 SUPPORT_GROUP = "@YourSupportGroup"    # उदा: @marco_support
 
 # कोर डाउनलोडर API और डेटाबेस फाइल का नाम
-COBALT_API_URL = "https://api.cobalt.tools/api/json"
+COBALT_API_URL = "https://api-dl.cgm.rs/api/json"
 DB_FILE = "database.json"
