@@ -3,8 +3,9 @@ import json
 import secrets
 import requests
 import telebot
+import datetime
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from config import TELEGRAM_BOT_TOKEN, DB_FILE, OWNER_ID, UPDATE_CHANNEL, SUPPORT_GROUP
+from config import TELEGRAM_BOT_TOKEN, DB_FILE, OWNER_ID, LOG_GROUP_ID, UPDATE_CHANNEL, SUPPORT_GROUP
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
@@ -22,7 +23,15 @@ def save_db(data):
     with open(DB_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
-# 🛠️ बैकएंड API का लाइव स्टेटस चेक करने वाला फंक्शन
+# 📣 लॉगर ग्रुप में मैसेज भेजने का फंक्शन
+def send_log(message_text):
+    if LOG_GROUP_ID != 0:
+        try:
+            bot.send_message(LOG_GROUP_ID, message_text, parse_mode="Markdown")
+        except Exception as e:
+            print(f"Log Error: {e}")
+
+# 🛠️ बैकएंड API का लाइव触发
 def check_api_status():
     try:
         response = requests.get("https://api.cobalt.tools/", timeout=5)
@@ -33,10 +42,32 @@ def check_api_status():
     except:
         return "🔴 OFFLINE (Maintenance)"
 
-# 🎛️ सभी बटन्स (Owner, Update, Support) एक साथ यहाँ सेट हैं
+# 28 दिन वाली लॉजिक के साथ नई की जनरेट करने का हेल्पर फंक्शन
+def generate_new_key(user_id, username, db, log_reason="New User"):
+    api_key = f"MARCO_{secrets.token_hex(12).upper()}"
+    today = datetime.date.today().isoformat()
+    db["users"][user_id] = {
+        "username": username,
+        "key": api_key,
+        "created_at": today
+    }
+    save_db(db)
+    
+    # 📝 लॉगर ग्रुप में की जनरेशन का अलर्ट भेजना
+    log_msg = (
+        f"🔑 *New API Key Generated!*\n\n"
+        f"👤 *User:* @{username}\n"
+        f"🆔 *ID:* `{user_id}`\n"
+        f"🔑 *Key:* `{api_key}`\n"
+        f"📌 *Reason:* {log_reason}"
+    )
+    send_log(log_msg)
+    
+    return api_key
+
+# 🎛️ सभी बटन्स (Owner, Update, Support)
 def get_main_keyboard():
     markup = InlineKeyboardMarkup()
-    
     ch_name = UPDATE_CHANNEL.replace("@", "").strip()
     sp_name = SUPPORT_GROUP.replace("@", "").strip()
     
@@ -55,28 +86,44 @@ def send_welcome(message):
     username = message.from_user.username or "User"
     
     db = load_db()
+    today = datetime.date.today()
+    
+    # 📝 लॉगर ग्रुप में सिर्फ स्टार्ट करने का अलर्ट भेजना
+    start_log = (
+        f"👋 *User Started Bot*\n\n"
+        f"👤 *User:* @{username}\n"
+        f"🆔 *ID:* `{user_id}`\n"
+        f"📅 *Time:* `{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
+    )
+    send_log(start_log)
     
     if user_id in db["users"]:
-        api_key = db["users"][user_id]["key"]
+        created_at_str = db["users"][user_id].get("created_at", today.isoformat())
+        created_at = datetime.date.fromisoformat(created_at_str)
+        days_passed = (today - created_at).days
+        
+        if days_passed >= 28:
+            api_key = generate_new_key(user_id, username, db, log_reason="Key Expired (28 Days Completed)")
+            status_text = "🔄 आपकी पुरानी की 28 दिन पूरे होने के कारण एक्सपायर हो गई थी। नई API Key जनरेट कर दी गई है!"
+        else:
+            api_key = db["users"][user_id]["key"]
+            remaining_days = 28 - days_passed
+            status_text = f"⏳ आपकी यह API Key अभी `{remaining_days} दिन` और वैलिड है।इसके बाद आप नई की निकाल सकेंगे।"
     else:
-        api_key = f"MARCO_{secrets.token_hex(12).upper()}"
-        db["users"][user_id] = {
-            "username": username,
-            "key": api_key
-        }
-        save_db(db)
+        api_key = generate_new_key(user_id, username, db, log_reason="First Time Registration")
+        status_text = "🎉 आपकी पहली 28-days API Key सफलतापूर्वक जनरेट हो गई है!"
 
     api_status = check_api_status()
 
-    # ✨ आपका कस्टम प्रीमियम वेलकम मैसेज आपके अपने नाम की URL के साथ ✨
     welcome_text = (
         f"👋 *Hello @{username}*\n\n"
         f"Welcome to *MARCO_BOTS API System*! I am here to provide you with your personal, high-speed API Key for seamless music and video downloading. 🚀\n\n"
+        f"📢 *Status:* {status_text}\n\n"
         f"🤖 *API Status:* `{api_status}`\n"
         f"🔑 *Your API Key:* `{api_key}`\n\n"
-        f"🌐 *API URL:* `https://api.cobalt.tools/api/json`\n\n"
+        f"🌐 *API URL:* `https://api.marco-bots.tools/api/v1/fetch`\n\n"
         f"📌 *Available Commands:*\n"
-        f"🔹 `/keygen` - Generate or view your 28-days API key\n"
+        f"🔹 `/keygen` - View or refresh your 28-days API key\n"
         f"🔹 `/stats` - View your API key usage stats 📊\n\n"
         f"💬 *Note:* Copy this key and paste it into your Music Bot's configuration Headers as `X-API-Key`. Enjoy uninterrupted service!"
     )
@@ -136,4 +183,3 @@ def broadcast_message(message):
 
 if __name__ == "__main__":
     bot.infinity_polling()
-    
