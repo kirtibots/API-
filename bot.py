@@ -1,27 +1,53 @@
 # bot.py
-import json
 import secrets
 import requests
 import telebot
 import datetime
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from config import TELEGRAM_BOT_TOKEN, DB_FILE, OWNER_ID, LOG_GROUP_ID, UPDATE_CHANNEL, SUPPORT_GROUP
+from pymongo import MongoClient  # 👈 मोंगोडीबी इम्पोर्ट किया
+from config import TELEGRAM_BOT_TOKEN, OWNER_ID, LOG_GROUP_ID, UPDATE_CHANNEL, SUPPORT_GROUP, MONGO_URL
 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
+# 🌐 MongoDB कनेक्शन सेटअप
+try:
+    client = MongoClient(MONGO_URL)
+    db_mongo = client["marco_bot_db"]       # डेटाबेस का नाम
+    users_collection = db_mongo["users"]    # कलेक्शन (टेबल) का नाम
+    print("✅ MongoDB Connected Successfully!")
+except Exception as e:
+    print(f"❌ MongoDB Connection Error: {e}")
+
 def load_db():
+    # मोंगोडीबी से सारा डेटा पुराने फॉर्मेट की तरह लोड करने का फंक्शन
     try:
-        with open(DB_FILE, "r") as f:
-            data = json.load(f)
-            if "users" not in data:
-                return {"users": {}}
-            return data
-    except:
+        all_users = users_collection.find()
+        user_dict = {}
+        for u in all_users:
+            user_dict[str(u["user_id"])] = {
+                "username": u["username"],
+                "key": u["key"],
+                "created_at": u["created_at"]
+            }
+        return {"users": user_dict}
+    except Exception as e:
+        print(f"Load DB Error: {e}")
         return {"users": {}}
 
-def save_db(data):
-    with open(DB_FILE, "w") as f:
-        json.dump(data, f, indent=4)
+def save_db_user(user_id, user_data):
+    # मोंगोडीबी में सिंगल यूजर का डेटा सेव या अपडेट करने का फंक्शन
+    try:
+        users_collection.update_one(
+            {"user_id": str(user_id)},
+            {"$set": {
+                "username": user_data["username"],
+                "key": user_data["key"],
+                "created_at": user_data["created_at"]
+            }},
+            upsert=True
+        )
+    except Exception as e:
+        print(f"Save DB Error: {e}")
 
 # 📣 लॉगर ग्रुप में मैसेज भेजने का फंक्शन
 def send_log(message_text):
@@ -46,12 +72,16 @@ def check_api_status():
 def generate_new_key(user_id, username, db, log_reason="New User"):
     api_key = f"MARCO_{secrets.token_hex(12).upper()}"
     today = datetime.date.today().isoformat()
-    db["users"][user_id] = {
+    
+    user_data = {
         "username": username,
         "key": api_key,
         "created_at": today
     }
-    save_db(db)
+    
+    # 💾 लोकल डिक्शनरी अपडेट करने के साथ मोंगोडीबी में सेव किया
+    db["users"][user_id] = user_data
+    save_db_user(user_id, user_data)
     
     # 📝 लॉगर ग्रुप में की जनरेशन का अलर्ट भेजना
     log_msg = (
@@ -183,3 +213,4 @@ def broadcast_message(message):
 
 if __name__ == "__main__":
     bot.infinity_polling()
+    
