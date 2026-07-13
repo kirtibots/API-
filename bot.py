@@ -148,10 +148,10 @@ def send_welcome(message):
     welcome_text = (
         f"👋 *Hello @{username}*\n\n"
         f"Welcome to *MARCO_BOTS API System*! I am here to provide you with your personal, high-speed API Key for seamless music and video downloading. 🚀\n\n"
-        f"📢 *Status:* {status_text}\n\n"
+        f"📢 *Status:* {status_text}\n"
         f"🤖 *API Status:* `{api_status}`\n"
-        f"🔑 *Your API Key:* `{api_key}`\n\n"
-        f"🌐 *API URL:* `https://api.marco-bots.tools/api/v1/fetch`\n\n"
+        f"🔑 *Your API Key:* `{api_key}`\n"
+        f"🌐 *API URL:* `https://api-dl.cgm.rs/api/json`\n"
         f"📌 *Available Commands:*\n"
         f"🔹 `/keygen` - View or refresh your 28-days API key\n"
         f"🔹 `/stats` - View your API key usage stats 📊\n\n"
