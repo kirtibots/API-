@@ -1,6 +1,7 @@
 # bot.py
 import json
 import secrets
+import requests
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import TELEGRAM_BOT_TOKEN, DB_FILE, OWNER_ID, UPDATE_CHANNEL, SUPPORT_GROUP
@@ -21,18 +22,33 @@ def save_db(data):
     with open(DB_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
+# 🛠️ बैकएंड API का लाइव स्टेटस चेक करने वाला फंक्शन
+def check_api_status():
+    try:
+        response = requests.get("https://api.cobalt.tools/", timeout=5)
+        if response.status_code == 200:
+            return "🟢 ONLINE (Fast & Stable)"
+        else:
+            return "🟡 LEAPING (Slowing Down)"
+    except:
+        return "🔴 OFFLINE (Maintenance)"
+
+# 🎛️ सभी बटन्स (Owner, Update, Support) एक साथ यहाँ सेट हैं
 def get_main_keyboard():
     markup = InlineKeyboardMarkup()
-    # यूजरनेम से @ हटाकर सही टेलीग्राम लिंक फॉर्मेट सेट करना
+    
     ch_name = UPDATE_CHANNEL.replace("@", "").strip()
     sp_name = SUPPORT_GROUP.replace("@", "").strip()
     
-    btn1 = InlineKeyboardButton("📢 Update Channel", url=f"https://t.me/{ch_name}")
-    btn2 = InlineKeyboardButton("💬 Support Group", url=f"https://t.me/{sp_name}")
-    markup.row(btn1, btn2)
+    btn_owner = InlineKeyboardButton("👑 Owner / Developer", url=f"https://t.me/{ch_name}")
+    btn_update = InlineKeyboardButton("📢 Update Channel", url=f"https://t.me/{ch_name}")
+    btn_support = InlineKeyboardButton("💬 Support Group", url=f"https://t.me/{sp_name}")
+    
+    markup.row(btn_owner)
+    markup.row(btn_update, btn_support)
     return markup
 
-# /start और /keygen कमांड्स हैंडलर
+# 🚀 /start और /keygen कमांड्स हैंडलर
 @bot.message_handler(commands=['start', 'keygen'])
 def send_welcome(message):
     user_id = str(message.from_user.id)
@@ -40,7 +56,6 @@ def send_welcome(message):
     
     db = load_db()
     
-    # अगर यूजर पहले से रजिस्टर्ड है, तो उसकी पुरानी की दिखाओ, नहीं तो नई बनाओ
     if user_id in db["users"]:
         api_key = db["users"][user_id]["key"]
     else:
@@ -51,16 +66,24 @@ def send_welcome(message):
         }
         save_db(db)
 
+    api_status = check_api_status()
+
+    # ✨ आपका कस्टम प्रीमियम वेलकम मैसेज आपके अपने नाम की URL के साथ ✨
     welcome_text = (
-        f"⚡️ *Welcome to MARCO_BOTS API System* ⚡️\n\n"
-        f"Hello @{username}, आपकी पर्सनल API Key जनरेट हो चुकी है।\n\n"
+        f"👋 *Hello @{username}*\n\n"
+        f"Welcome to *MARCO_BOTS API System*! I am here to provide you with your personal, high-speed API Key for seamless music and video downloading. 🚀\n\n"
+        f"🤖 *API Status:* `{api_status}`\n"
         f"🔑 *Your API Key:* `{api_key}`\n\n"
-        f"📌 *Note:* इस की (Key) को कॉपी करें और अपने म्यूजिक बॉट के Headers में `X-API-Key` के साथ इस्तेमाल करें।"
+        f"🌐 *API URL:* `https://api.cobalt.tools/api/json`\n\n"
+        f"📌 *Available Commands:*\n"
+        f"🔹 `/keygen` - Generate or view your 28-days API key\n"
+        f"🔹 `/stats` - View your API key usage stats 📊\n\n"
+        f"💬 *Note:* Copy this key and paste it into your Music Bot's configuration Headers as `X-API-Key`. Enjoy uninterrupted service!"
     )
     
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
 
-# ओनर कमांड: कुल यूज़र्स और चाबियाँ देखने के लिए
+# 📊 ओनर कमांड: कुल यूज़र्स और चाबियाँ देखने के लिए
 @bot.message_handler(commands=['stats'])
 def show_stats(message):
     if message.from_user.id != OWNER_ID:
@@ -76,7 +99,7 @@ def show_stats(message):
     )
     bot.reply_to(message, stats_text, parse_mode="Markdown")
 
-# ओनर कमांड: सभी यूज़र्स को एक साथ मैसेज भेजने के लिए
+# 📢 ओनर कमांड: सभी यूज़र्स को एक साथ मैसेज भेजने के लिए
 @bot.message_handler(commands=['broadcast'])
 def broadcast_message(message):
     if message.from_user.id != OWNER_ID:
@@ -113,4 +136,4 @@ def broadcast_message(message):
 
 if __name__ == "__main__":
     bot.infinity_polling()
-  
+    
