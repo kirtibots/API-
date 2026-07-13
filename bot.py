@@ -140,6 +140,7 @@ def send_start_welcome(message):
         f"👋 *Hello {user_name}*,\n\n"
         f"Welcome to *krishna_BOTS API System*! 🚀\n\n"
         f"Main aapko high-speed aur personal API Keys provide karunga jisse aap apne Music bots me bina kisi dikkat ke high-quality gaane aur videos play kar payenge.\n\n"
+       f"🌐 *API URL:* `https://marco-yt-api-production.up.railway.app/api/json`\n\n"
         f"📌 *Apni API Key nikalne ke liye niche diye gaye command ka use kare:*\n"
         f"👉 `/keygen` - Generate or View your 28-Days API Key\n\n"
         f"any help to  Support group join!"
