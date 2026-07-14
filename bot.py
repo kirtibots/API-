@@ -113,7 +113,7 @@ def get_main_keyboard():
     update_link = clean_tg_link(UPDATE_CHANNEL, "Telegram")
     support_link = clean_tg_link(SUPPORT_GROUP, "Telegram")
     
-    btn_owner = InlineKeyboardButton("⛥ 𝗞ʀ𝛊֟፝͝ꜱʜnᴀ ⛥", url=owner_link)
+    btn_owner = InlineKeyboardButton("⛥ 𝐁𝐀𝐃𝐍𝐀𝐌 ⛥", url=owner_link)
     btn_update = InlineKeyboardButton("📢 Update", url=update_link)
     btn_support = InlineKeyboardButton("💬 Support", url=support_link)
     
@@ -138,7 +138,7 @@ def send_start_welcome(message):
     
     welcome_text = (
         f"👋 *Hello {user_name}*,\n\n"
-        f"Welcome to *krishna_BOTS API System*! 🚀\n\n"
+        f"Welcome to *KIRTI_BOTS API System*! 🚀\n\n"
         f"Main aapko high-speed aur personal API Keys provide karunga jisse aap apne Music bots me bina kisi dikkat ke high-quality gaane aur videos play kar payenge.\n\n"
        f"🌐 *API URL:* `https://marco-yt-api-production.up.railway.app/api/json`\n\n"
         f"📌 *Apni API Key nikalne ke liye niche diye gaye command ka use kare:*\n"
