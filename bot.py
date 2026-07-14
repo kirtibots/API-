@@ -178,11 +178,11 @@ def handle_key_generation(message):
     api_status = check_api_status()
 
     keygen_text = (
-        f"🔑 *MARCO_BOTS API KEY MANAGER* 🔑\n\n"
+        f"🔑 *KIRTI_BOTS API KEY MANAGER* 🔑\n\n"
         f"👤 *User Name:* {first_name}\n"
         f"📢 *Key Status:* {status_text}\n"
         f"🤖 *System Status:* `{api_status}`\n"
-        f"🌐 *API URL:* `https://marco-yt-api-production.up.railway.app/api/json`\n\n"
+        f"🌐 *API URL:* `https://KIRTI-yt-api-production.up.railway.app/api/json`\n\n"
         f"💬 *Note:* Is key ko copy kare aur apne Music Bot ke Environment Variables / Config Headers me `X-API-Key` ke roop me paste kar dein. Enjoy seamless downloading! 🚀"
     )
     bot.send_message(message.chat.id, keygen_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
@@ -195,7 +195,7 @@ def show_stats(message):
     db = load_db()
     total_users = len(db["users"])
     stats_text = (
-        f"📊 *MARCO_BOTS Live Statistics*\n\n"
+        f"📊 *KIRTI_BOTS Live Statistics*\n\n"
         f"👥 Total Registered Users: `{total_users}`\n"
         f"🔑 Total Generated Keys: `{total_users}`"
     )
