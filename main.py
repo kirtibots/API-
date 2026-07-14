@@ -7,10 +7,10 @@ import requests
 from config import COBALT_API_URL
 import bot
 
-app = FastAPI(title="MARCO_BOTS Custom API Server")
+app = FastAPI(title="KIRTI_BOTS Custom API Server")
 
 def run_bot():
-    print("Starting MARCO_BOTS Telegram Bot Thread...")
+    print("Starting KIRTI_BOTS Telegram Bot Thread...")
     bot.bot.infinity_polling()
 
 @app.on_event("startup")
@@ -24,7 +24,7 @@ class DownloadPayload(BaseModel):
 
 @app.get("/")
 def home():
-    return {"status": "MARCO_BOTS API & Bot are live and running successfully!"}
+    return {"status": "KIRTI_BOTS API & Bot are live and running successfully!"}
 
 @app.post("/api/v1/fetch")
 async def get_link(payload: DownloadPayload, api_key: str = Depends(validate_api_key)):
