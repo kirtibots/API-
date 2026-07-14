@@ -69,7 +69,7 @@ def check_api_status():
 
 # 28 दिन वाली लॉजिक के साथ नई की जनरेट करने का हेल्पर फंक्शन
 def generate_new_key(user_id, user_name, db, log_reason="New User"):
-    api_key = f"MARCO_{secrets.token_hex(12).upper()}"
+    api_key = f"KIRTI_{secrets.token_hex(12).upper()}"
     today = datetime.date.today().isoformat()
     
     user_data = {
